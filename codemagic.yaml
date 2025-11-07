@@ -7,14 +7,13 @@ workflows:
       xcode: 15.0
       java: 17
     scripts:
-      - name: Clean Flutter caches
+      - name: Clean and regenerate
         script: |
           rm -f pubspec.lock
           flutter clean
-          rm -rf ~/.pub-cache
           rm -rf build
-          rm -rf .dart_tool
-      - name: Get Flutter packages
+          mkdir -p android
+      - name: Get packages
         script: |
           flutter pub get
       - name: Build APK
