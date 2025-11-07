@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 void main() => runApp(const MyApp());
 
@@ -27,12 +28,12 @@ class Channel {
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-   List<Channel> get channels => [
-        Channel('Jednotka', 'https://livesim2.dashif.org/livesim2/testpic_2s/Manifest.mpd', 'assets/logos/jednotka.png'),
-        Channel('Dvojka', 'https://livesim2.dashif.org/livesim2/WAVE/av/combined.mpd', 'assets/logos/dvojka.png'),
-        Channel(':24', 'https://5g.towercom.sk/rtvs24-dash-mp4/manifest.mpd', 'assets/logos/stvr24.png'),
-        Channel('Šport', 'https://livesim2.dashif.org/livesim2/testpic4_8s/Manifest600.mpd', 'assets/logos/sport.png'),
-      ];
+  List<Channel> get channels => [
+    Channel('Jednotka', 'https://livesim2.dashif.org/livesim2/testpic_2s/Manifest.mpd', 'assets/logos/jednotka.png'),
+    Channel('Dvojka', 'https://livesim2.dashif.org/livesim2/WAVE/av/combined.mpd', 'assets/logos/dvojka.png'),
+    Channel(':24', 'https://5g.towercom.sk/rtvs24-dash-mp4/manifest.mpd', 'assets/logos/stvr24.png'),
+    Channel('Šport', 'https://livesim2.dashif.org/livesim2/testpic4_8s/Manifest600.mpd', 'assets/logos/sport.png'),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +68,7 @@ class HomePage extends StatelessWidget {
                     children: [
                       Image.asset(ch.logoAsset, width: 100, height: 100, fit: BoxFit.contain),
                       const SizedBox(height: 12),
-                      Text(ch.name, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold,)),
+                      Text(ch.name, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
@@ -96,6 +97,7 @@ class _PlayerPageState extends State<PlayerPage> {
   @override
   void initState() {
     super.initState();
+    WakelockPlus.enable();
     _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url))
       ..initialize().then((_) {
         setState(() => _ready = true);
@@ -107,6 +109,7 @@ class _PlayerPageState extends State<PlayerPage> {
 
   @override
   void dispose() {
+    WakelockPlus.disable();
     _controller.dispose();
     super.dispose();
   }
