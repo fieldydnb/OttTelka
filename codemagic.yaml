@@ -9,9 +9,28 @@ workflows:
           #!/bin/bash
           set -e
           cd $CM_BUILD_DIR
+          
+          # Vygeneruj Android priečinok ak neexistuje
           if [ ! -d "android" ]; then
+            echo "Creating Android directory..."
             flutter create --platforms=android,ios .
           fi
+          
+          echo "✓ Android directory exists"
+          
+          # Pridaj INTERNET permission do AndroidManifest.xml
+          MANIFEST="$CM_BUILD_DIR/android/app/src/main/AndroidManifest.xml"
+          if [ -f "$MANIFEST" ]; then
+            if ! grep -q "INTERNET" "$MANIFEST"; then
+              sed -i.bak '/<manifest/a\    <uses-permission android:name="android.permission.INTERNET" />' "$MANIFEST"
+              echo "✓ Added INTERNET permission"
+            else
+              echo "✓ INTERNET permission already exists"
+            fi
+          else
+            echo "❌ AndroidManifest.xml not found!"
+          fi
+      
       - name: Install dependencies
         script: |
           #!/bin/bash
@@ -20,11 +39,13 @@ workflows:
           flutter clean
           rm -f pubspec.lock
           flutter pub get
+      
       - name: Build APK
         script: |
           #!/bin/bash
           set -e
           cd $CM_BUILD_DIR
           flutter build apk --release
+    
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
