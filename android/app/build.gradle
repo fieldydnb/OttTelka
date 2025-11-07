@@ -7,7 +7,9 @@ plugins {
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
-    localPropertiesFile.withInputStream { properties.load(it) }
+    localPropertiesFile.withInputStream { reader ->
+        localProperties.load(reader)
+    }
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
