@@ -7,13 +7,14 @@ workflows:
       xcode: 15.0
       java: 17
     scripts:
-      - name: Clean and setup
+      - name: Clean everything
         script: |
-          rm -rf android build .dart_tool pubspec.lock
+          rm -rf build .dart_tool pubspec.lock
           flutter clean
+          dart pub cache clean
           flutter pub get
 
-      - name: Regenerate Android with new Gradle
+      - name: Regenerate Android
         script: |
           flutter create -t app --org com.stvrtv --project-name mobile .
 
