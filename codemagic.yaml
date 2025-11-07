@@ -6,22 +6,15 @@ workflows:
       flutter: 3.24.0
 
     scripts:
-      - name: Regenerate Android folder
+      - name: Clean and Regenerate Android folder
         script: |
-          if [ ! -d "android" ]; then
-            echo "Android folder not found. Regenerating Flutter project..."
-            flutter create --org com.stvrtv --project-name mobile .
-          else
-            echo "Android folder exists. Skipping regeneration."
-          fi
+          rm -rf android
+          flutter create --platforms=android .
 
-      - name: Fetch dependencies
+      - name: Build APK
         script: |
           flutter clean
           flutter pub get
-
-      - name: Build release APK
-        script: |
           flutter build apk --release
 
     artifacts:
