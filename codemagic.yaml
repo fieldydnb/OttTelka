@@ -7,19 +7,18 @@ workflows:
       xcode: 15.0
       java: 17
     scripts:
-      - name: Complete clean
+      - name: Complete clean - DELETE EVERYTHING
         script: |
-          rm -rf android .dart_tool build pubspec.lock
+          rm -rf android .dart_tool build pubspec.lock ~/.pub-cache
           flutter clean
-          flutter pub cache clean --force
 
-      - name: Get Flutter packages
+      - name: Get Flutter packages fresh
         script: |
-          flutter pub get
+          flutter pub get --no-offline
 
-      - name: Regenerate Android
+      - name: Regenerate Android from scratch
         script: |
-          flutter create -t app --org com.stvrtv --project-name mobile . --no-offline
+          flutter create -t app --org com.stvrtv --project-name mobile . --force
 
       - name: Build APK
         script: |
