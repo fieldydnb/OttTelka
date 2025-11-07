@@ -3,15 +3,10 @@ workflows:
     name: OttTelka Android Build
     instance_type: mac_mini_m1
     environment:
-      flutter: 3.24.0
+      flutter: 3.22.0
       xcode: 15.0
       java: 11
     scripts:
-      - name: Update Gradle wrapper to compatible version
-        script: |
-          cd android
-          ./gradlew wrapper --gradle-version=8.3
-          cd ..
       - name: Remove pubspec.lock and clean caches
         script: |
           rm -f pubspec.lock
