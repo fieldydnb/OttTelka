@@ -36,7 +36,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('OttTelka')),
+      appBar: AppBar(title: const Text('STVR LiveTelka')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: GridView.count(
@@ -66,7 +66,7 @@ class HomePage extends StatelessWidget {
                     children: [
                       Image.asset(ch.logoAsset, width: 100, height: 100, fit: BoxFit.contain),
                       const SizedBox(height: 12),
-                      Text(ch.name, textAlign: TextAlign.center, style: const TextStyle(fontSize: 14)),
+                      Text(ch.name, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold,)),
                     ],
                   ),
                 ),
