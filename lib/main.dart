@@ -19,7 +19,8 @@ class MyApp extends StatelessWidget {
 class Channel {
   final String name;
   final String url;
-  const Channel(this.name, this.url);
+  final String logoAsset;
+  const Channel(this.name, this.url, this.logoAsset);
 }
 
 class HomePage extends StatelessWidget {
@@ -28,10 +29,10 @@ class HomePage extends StatelessWidget {
   final String demoUrl = 'https://5g.towercom.sk/rtvs24-dash-mp4/manifest.mpd';
 
   List<Channel> get channels => [
-        Channel('RTVS 24', demoUrl),
-        Channel('RTVS 1', demoUrl),
-        Channel('RTVS 2', demoUrl),
-        Channel('RTVS 3', demoUrl),
+        Channel('Jednotka', demoUrl, 'assets/logos/jednotka.png'),
+        Channel('Dvojka', demoUrl, 'assets/logos/dvojka.png'),
+        Channel(':24', demoUrl, 'assets/logos/stvr24.png'),
+        Channel('Šport', demoUrl, 'assets/logos/sport.png'),
       ];
 
   @override
@@ -42,27 +43,34 @@ class HomePage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: GridView.count(
           crossAxisCount: 2,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          childAspectRatio: 16 / 9,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: 1,
           children: [
             for (final ch in channels)
-              ElevatedButton(
-                onPressed: () {
+              GestureDetector(
+                onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => PlayerPage(title: ch.name, url: ch.url),
+                      builder: (_) => PlayerPage(title: ch.name, url: ch.url, logo: ch.logoAsset),
                     ),
                   );
                 },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.play_arrow),
-                    const SizedBox(width: 8),
-                    Flexible(child: Text('Play ${ch.name}', overflow: TextOverflow.ellipsis)),
-                  ],
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[900],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey[800]!, width: 1),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(ch.logoAsset, width: 100, height: 100, fit: BoxFit.contain),
+                      const SizedBox(height: 12),
+                      Text(ch.name, textAlign: TextAlign.center, style: const TextStyle(fontSize: 14)),
+                    ],
+                  ),
                 ),
               ),
           ],
@@ -75,7 +83,8 @@ class HomePage extends StatelessWidget {
 class PlayerPage extends StatefulWidget {
   final String title;
   final String url;
-  const PlayerPage({super.key, required this.title, required this.url});
+  final String logo;
+  const PlayerPage({super.key, required this.title, required this.url, required this.logo});
 
   @override
   State<PlayerPage> createState() => _PlayerPageState();
