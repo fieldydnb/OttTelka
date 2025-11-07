@@ -5,13 +5,19 @@ workflows:
     environment:
       flutter: 3.24.0
     scripts:
+      - name: Regenerate Android
+        script: |
+          flutter create -t app --org com.stvrtv --project-name mobile .
+
       - name: Build
         script: |
           flutter clean
           flutter pub get
           flutter build apk --release
+
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
+
     publishing:
       email:
         recipients:
