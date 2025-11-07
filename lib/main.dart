@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:better_player/better_player.dart';
+import 'package:video_player/video_player.dart';
 
 void main() => runApp(const MyApp());
 
@@ -92,61 +92,51 @@ class PlayerPage extends StatefulWidget {
 }
 
 class _PlayerPageState extends State<PlayerPage> {
-  late BetterPlayerController _betterPlayerController;
+  late final VideoPlayerController _controller;
+  bool _ready = false;
+  String _errorMessage = '';
 
   @override
   void initState() {
     super.initState();
-    _initializePlayer();
-  }
-
-  void _initializePlayer() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        const BetterPlayerConfiguration(
-      autoPlay: true,
-      looping: true,
-      fullScreenByDefault: false,
-      allowedScreenSleep: false,
-    );
-
-    _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
-
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.dash,
-      widget.url,
-    );
-
-    _betterPlayerController.setupDataSource(dataSource);
+    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url))
+      ..initialize().then((_) {
+        setState(() => _ready = true);
+        _controller
+          ..setLooping(true)
+          ..play();
+      }).catchError((e) {
+        setState(() => _errorMessage = 'Chyba: ${e.toString()}');
+        print('❌ Player Error: $e');
+      });
   }
 
   @override
   void dispose() {
-    _betterPlayerController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-        await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-        return true;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              child: AspectRatio(
-                aspectRatio: 16 / 9,
-                child: BetterPlayer(controller: _betterPlayerController),
-              ),
-            ),
-          ],
-        ),
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.title)),
+      body: Center(
+        child: _errorMessage.isNotEmpty
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error, color: Colors.red, size: 48),
+                  const SizedBox(height: 16),
+                  Text(_errorMessage, textAlign: TextAlign.center),
+                ],
+              )
+            : _ready
+                ? AspectRatio(
+                    aspectRatio: _controller.value.aspectRatio == 0 ? 16 / 9 : _controller.value.aspectRatio,
+                    child: VideoPlayer(_controller),
+                  )
+                : const CircularProgressIndicator(),
       ),
     );
   }
