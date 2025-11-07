@@ -7,25 +7,15 @@ workflows:
       xcode: 15.0
       java: 17
     scripts:
-      - name: Backup current code
+      - name: Full clean and regenerate
         script: |
-          cp -r lib lib_backup
-          cp pubspec.yaml pubspec_backup.yaml
-          cp -r assets assets_backup 2>/dev/null || true
-      
-      - name: Create new Flutter app project
+          set -e
+          rm -rf android .dart_tool build pubspec.lock
+          flutter clean
+          
+      - name: Recreate Android in current directory
         script: |
-          cd ..
-          rm -rf otttelka_clean
-          flutter create -t app --org com.stvrtv --project-name mobile otttelka_clean
-          cd otttelka_clean
-      
-      - name: Restore backed up code
-        script: |
-          rm -rf lib
-          cp -r ../clone/lib_backup lib
-          cp ../clone/pubspec_backup.yaml pubspec.yaml
-          cp -r ../clone/assets_backup assets 2>/dev/null || true
+          flutter create -t app --org com.stvrtv --project-name mobile . --no-offline
       
       - name: Get packages
         script: |
