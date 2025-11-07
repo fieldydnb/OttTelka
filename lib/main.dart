@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:better_player/better_player.dart';
+import 'package:video_player/video_player.dart';
 
 void main() {
   runApp(const MyApp());
@@ -62,32 +62,21 @@ class PlayerPage extends StatefulWidget {
 }
 
 class _PlayerPageState extends State<PlayerPage> {
-  BetterPlayerController? _betterPlayerController;
+  late VideoPlayerController _controller;
 
   @override
   void initState() {
     super.initState();
-    BetterPlayerConfiguration betterPlayerConfiguration = const BetterPlayerConfiguration(
-      autoPlay: true,
-      allowedScreenSleep: false,
-      aspectRatio: 16/9,
-      fullScreenByDefault: false,
-    );
-
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
-      widget.url,
-      useAsmsSubtitles: false,
-      drmConfiguration: null,
-    );
-
-    _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
-    _betterPlayerController!.setupDataSource(dataSource);
+    _controller = VideoPlayerController.network(widget.url)
+      ..initialize().then((_) {
+        setState(() {});
+        _controller.play();
+      });
   }
 
   @override
   void dispose() {
-    _betterPlayerController?.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -97,14 +86,17 @@ class _PlayerPageState extends State<PlayerPage> {
       appBar: AppBar(title: const Text('RTVS 24')),
       body: GestureDetector(
         onTap: () {
-          // toggle fullscreen
-          _betterPlayerController?.enterFullScreen();
+          setState(() {
+            _controller.value.isPlaying ? _controller.pause() : _controller.play();
+          });
         },
         child: Center(
-          child: AspectRatio(
-            aspectRatio: 16/9,
-            child: BetterPlayer(controller: _betterPlayerController!),
-          ),
+          child: _controller.value.isInitialized
+              ? AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: VideoPlayer(_controller),
+                )
+              : const CircularProgressIndicator(),
         ),
       ),
     );
