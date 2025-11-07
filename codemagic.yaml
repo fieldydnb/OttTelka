@@ -3,25 +3,14 @@ workflows:
     name: OttTelka Android Build
     instance_type: mac_mini_m1
     environment:
-      flutter: 3.22.0
+      flutter: 3.24.0
       xcode: 15.0
       java: 17
     scripts:
-      - name: Complete clean
-        script: |
-          rm -rf android .dart_tool build pubspec.lock ~/.pub-cache
-          flutter clean
-
-      - name: Get Flutter packages fresh
-        script: |
-          flutter pub get --no-offline
-
-      - name: Regenerate Android from scratch
-        script: |
-          flutter create -t app --org com.stvrtv --project-name mobile . --no-offline
-
       - name: Build APK
         script: |
+          flutter clean
+          flutter pub get
           flutter build apk --release
 
     artifacts:
