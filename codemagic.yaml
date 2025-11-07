@@ -10,57 +10,8 @@ workflows:
           set -e
           cd $CM_BUILD_DIR
           if [ ! -d "android" ]; then
-            echo "Creating Android directory..."
             flutter create --platforms=android,ios .
           fi
-          if [ -d "android" ]; then
-            echo "✓ Android directory exists"
-          else
-            echo "✗ Android directory missing!"
-            exit 1
-          fi
-      - name: Configure Android build.gradle
-        script: |
-          #!/bin/bash
-          set -e
-          cd $CM_BUILD_DIR/android/app
-          cat > build.gradle << 'GRADLE_EOF'
-          plugins {
-              id "com.android.application"
-              id "kotlin-android"
-              id "dev.flutter.flutter-gradle-plugin"
-          }
-          
-          android {
-              namespace = "com.example.stvr_mobile"
-              compileSdkVersion 35
-              ndkVersion "27.0.12077973"
-              compileOptions {
-                  sourceCompatibility JavaVersion.VERSION_11
-                  targetCompatibility JavaVersion.VERSION_11
-              }
-              kotlinOptions {
-                  jvmTarget = '11'
-              }
-              defaultConfig {
-                  applicationId "com.example.stvr_mobile"
-                  minSdkVersion 21
-                  targetSdkVersion 35
-                  versionCode 1
-                  versionName "1.0.0"
-              }
-              buildTypes {
-                  release {
-                      signingConfig signingConfigs.debug
-                  }
-              }
-          }
-          
-          dependencies {
-              implementation 'androidx.media:media:1.6.0'
-          }
-          GRADLE_EOF
-          echo "✓ build.gradle configured"
       - name: Install dependencies
         script: |
           #!/bin/bash

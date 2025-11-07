@@ -1,23 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_video/media_kit_video.dart';
+import 'package:video_player/video_player.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  try {
-    MediaKit.ensureInitialized();
-    print('✓ MediaKit initialized successfully');
-  } catch (e) {
-    print('❌ MediaKit initialization failed: $e');
-  }
-  
+void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -79,7 +69,6 @@ class HomePage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Pridaj error handling pre obrázok
                       Image.asset(
                         ch.logoAsset,
                         width: 100,
@@ -119,7 +108,7 @@ class PlayerPage extends StatefulWidget {
   final String title;
   final String url;
   final String logo;
-  
+
   const PlayerPage({
     super.key,
     required this.title,
@@ -132,9 +121,8 @@ class PlayerPage extends StatefulWidget {
 }
 
 class _PlayerPageState extends State<PlayerPage> {
-  late final Player player = Player();
-  late final VideoController controller = VideoController(player);
-  bool isLoading = true;
+  late VideoPlayerController _controller;
+  bool isInitialized = false;
   String? errorMessage;
 
   @override
@@ -145,20 +133,19 @@ class _PlayerPageState extends State<PlayerPage> {
 
   Future<void> _initializePlayer() async {
     try {
-      await player.open(Media(widget.url));
-      setState(() => isLoading = false);
+      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url));
+      await _controller.initialize();
+      _controller.play();
+      setState(() => isInitialized = true);
     } catch (e) {
-      setState(() {
-        errorMessage = 'Chyba pri načítavaní: $e';
-        isLoading = false;
-      });
+      setState(() => errorMessage = 'Chyba: $e');
       print('❌ Player error: $e');
     }
   }
 
   @override
   void dispose() {
-    player.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -166,16 +153,36 @@ class _PlayerPageState extends State<PlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : errorMessage != null
-              ? Center(child: Text(errorMessage!))
-              : Center(
-                  child: Video(
-                    controller: controller,
-                    controls: MaterialVideoControls,
-                  ),
+      body: isInitialized
+          ? Center(
+              child: AspectRatio(
+                aspectRatio: _controller.value.aspectRatio,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    VideoPlayer(_controller),
+                    FloatingActionButton(
+                      backgroundColor: Colors.black54,
+                      onPressed: () {
+                        setState(() {
+                          _controller.value.isPlaying
+                              ? _controller.pause()
+                              : _controller.play();
+                        });
+                      },
+                      child: Icon(
+                        _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                      ),
+                    ),
+                  ],
                 ),
+              ),
+            )
+          : Center(
+              child: errorMessage != null
+                  ? Text(errorMessage!)
+                  : const CircularProgressIndicator(),
+            ),
     );
   }
 }
