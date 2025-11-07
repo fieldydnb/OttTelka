@@ -7,12 +7,25 @@ workflows:
       xcode: 15.0
       java: 17
     scripts:
-      - name: Clean Flutter cache
+      - name: Backup current code
         script: |
-          flutter clean
-          rm -f pubspec.lock
-          rm -rf build
-          rm -rf .dart_tool
+          cp -r lib lib_backup
+          cp pubspec.yaml pubspec_backup.yaml
+          cp -r assets assets_backup 2>/dev/null || true
+      
+      - name: Create new Flutter app project
+        script: |
+          cd ..
+          rm -rf otttelka_clean
+          flutter create -t app otttelka_clean
+          cd otttelka_clean
+      
+      - name: Restore backed up code
+        script: |
+          rm -rf lib
+          cp -r ../clone/lib_backup lib
+          cp ../clone/pubspec_backup.yaml pubspec.yaml
+          cp -r ../clone/assets_backup assets 2>/dev/null || true
       
       - name: Get packages
         script: |
