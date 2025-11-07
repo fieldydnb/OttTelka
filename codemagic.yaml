@@ -6,12 +6,6 @@ workflows:
       flutter: 3.19.0
       xcode: 15.0
       java: 17
-    triggering:
-      events:
-        - push
-      branch:
-        include_patterns:
-          - main
     scripts:
       - name: Initialize Android directory
         script: |
