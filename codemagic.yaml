@@ -7,26 +7,27 @@ workflows:
       xcode: 15.0
       java: 17
     scripts:
-      - name: Remove pubspec.lock and clean caches
+      - name: Clean Flutter caches
         script: |
           rm -f pubspec.lock
           flutter clean
           rm -rf ~/.pub-cache
           rm -rf build
           rm -rf .dart_tool
-          cd android
-          ./gradlew clean
-          cd ..
+      - name: Create fresh Flutter structure
+        script: |
+          flutter create --force --org com.stvrtv --project-name mobile .
       - name: Get Flutter packages
         script: |
           flutter pub get
       - name: Build APK
         script: |
-          flutter build apk --release --verbose
+          flutter build apk --release
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
     publishing:
       email:
         recipients:
           - fieldydnb@gmail.com
+
 
