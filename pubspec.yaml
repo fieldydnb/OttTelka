@@ -13,7 +13,6 @@ dependencies:
     sdk: flutter
   video_player: ^2.9.0
   cupertino_icons: ^1.0.2
-  wakelock: ^0.6.0
 
 dev_dependencies:
   flutter_test:

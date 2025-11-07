@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
-import 'package:wakelock/wakelock.dart';
 
 void main() => runApp(const MyApp());
 
@@ -97,7 +96,6 @@ class _PlayerPageState extends State<PlayerPage> {
   @override
   void initState() {
     super.initState();
-    Wakelock.enable();
     _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url))
       ..initialize().then((_) {
         setState(() => _ready = true);
@@ -109,7 +107,6 @@ class _PlayerPageState extends State<PlayerPage> {
 
   @override
   void dispose() {
-    Wakelock.disable();
     _controller.dispose();
     super.dispose();
   }
