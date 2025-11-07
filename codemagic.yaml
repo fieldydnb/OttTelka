@@ -11,8 +11,7 @@ workflows:
         script: |
           rm -rf android .dart_tool build pubspec.lock
           flutter clean
-          flutter pub cache clean media_kit
-          flutter pub cache clean screen_brightness_android
+          flutter pub cache clean --force
 
       - name: Get Flutter packages
         script: |
