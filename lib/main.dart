@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
+import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // KRITICKÉ: MediaKit.ensureInitialized() MUSÍ byť PRVÝ!
+  try {
+    MediaKit.ensureInitialized();
+    print('✓ MediaKit initialized');
+  } catch (e) {
+    print('❌ MediaKit error: $e');
+  }
+  
   runApp(const MyApp());
 }
 
@@ -31,12 +42,12 @@ class Channel {
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-List<Channel> get channels => [
-  Channel('Jednotka', 'https://commondatastorage.googleapis.com/gtv-videos-library/sample/BigBuckBunny.mp4', 'assets/logos/jednotka.png'),
-  Channel('Dvojka', 'https://commondatastorage.googleapis.com/gtv-videos-library/sample/ElephantsDream.mp4', 'assets/logos/dvojka.png'),
-  Channel(':24', 'https://commondatastorage.googleapis.com/gtv-videos-library/sample/ForBiggerBlazes.mp4', 'assets/logos/stvr24.png'),
-  Channel('Šport', 'https://commondatastorage.googleapis.com/gtv-videos-library/sample/ForBiggerEscapes.mp4', 'assets/logos/sport.png'),
-];
+  List<Channel> get channels => [
+    Channel('Jednotka', 'https://livesim2.dashif.org/livesim2/testpic_2s/Manifest.mpd', 'assets/logos/jednotka.png'),
+    Channel('Dvojka', 'https://livesim2.dashif.org/livesim2/WAVE/av/combined.mpd', 'assets/logos/dvojka.png'),
+    Channel(':24', 'https://5g.towercom.sk/rtvs24-dash-mp4/manifest.mpd', 'assets/logos/stvr24.png'),
+    Channel('Šport', 'https://livesim2.dashif.org/livesim2/testpic4_8s/Manifest600.mpd', 'assets/logos/sport.png'),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +67,7 @@ List<Channel> get channels => [
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => PlayerPage(title: ch.name, url: ch.url, logo: ch.logoAsset),
+                      builder: (_) => PlayerPage(title: ch.name, url: ch.url),
                     ),
                   );
                 },
@@ -107,13 +118,11 @@ List<Channel> get channels => [
 class PlayerPage extends StatefulWidget {
   final String title;
   final String url;
-  final String logo;
 
   const PlayerPage({
     super.key,
     required this.title,
     required this.url,
-    required this.logo,
   });
 
   @override
@@ -121,31 +130,28 @@ class PlayerPage extends StatefulWidget {
 }
 
 class _PlayerPageState extends State<PlayerPage> {
-  late VideoPlayerController _controller;
-  bool isInitialized = false;
-  String? errorMessage;
+  late final player = Player();
+  late final controller = VideoController(player);
 
   @override
   void initState() {
     super.initState();
-    _initializePlayer();
+    _play();
   }
 
-  Future<void> _initializePlayer() async {
+  Future<void> _play() async {
     try {
-      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url));
-      await _controller.initialize();
-      _controller.play();
-      setState(() => isInitialized = true);
+      print('🎬 Opening stream: ${widget.url}');
+      await player.open(Media(widget.url));
+      print('✓ Stream opened successfully');
     } catch (e) {
-      setState(() => errorMessage = 'Chyba: $e');
-      print('❌ Player error: $e');
+      print('❌ Error opening stream: $e');
     }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    player.dispose();
     super.dispose();
   }
 
@@ -153,36 +159,12 @@ class _PlayerPageState extends State<PlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
-      body: isInitialized
-          ? Center(
-              child: AspectRatio(
-                aspectRatio: _controller.value.aspectRatio,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    VideoPlayer(_controller),
-                    FloatingActionButton(
-                      backgroundColor: Colors.black54,
-                      onPressed: () {
-                        setState(() {
-                          _controller.value.isPlaying
-                              ? _controller.pause()
-                              : _controller.play();
-                        });
-                      },
-                      child: Icon(
-                        _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          : Center(
-              child: errorMessage != null
-                  ? Text(errorMessage!)
-                  : const CircularProgressIndicator(),
-            ),
+      body: Center(
+        child: Video(
+          controller: controller,
+          controls: MaterialVideoControls,
+        ),
+      ),
     );
   }
 }
