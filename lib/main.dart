@@ -31,12 +31,12 @@ class Channel {
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  List<Channel> get channels => [
-    Channel('Jednotka', 'https://livesim2.dashif.org/livesim2/testpic_2s/Manifest.mpd', 'assets/logos/jednotka.png'),
-    Channel('Dvojka', 'https://livesim2.dashif.org/livesim2/WAVE/av/combined.mpd', 'assets/logos/dvojka.png'),
-    Channel(':24', 'https://5g.towercom.sk/rtvs24-dash-mp4/manifest.mpd', 'assets/logos/stvr24.png'),
-    Channel('Šport', 'https://livesim2.dashif.org/livesim2/testpic4_8s/Manifest600.mpd', 'assets/logos/sport.png'),
-  ];
+List<Channel> get channels => [
+  Channel('Jednotka', 'https://commondatastorage.googleapis.com/gtv-videos-library/sample/BigBuckBunny.mp4', 'assets/logos/jednotka.png'),
+  Channel('Dvojka', 'https://commondatastorage.googleapis.com/gtv-videos-library/sample/ElephantsDream.mp4', 'assets/logos/dvojka.png'),
+  Channel(':24', 'https://commondatastorage.googleapis.com/gtv-videos-library/sample/ForBiggerBlazes.mp4', 'assets/logos/stvr24.png'),
+  Channel('Šport', 'https://commondatastorage.googleapis.com/gtv-videos-library/sample/ForBiggerEscapes.mp4', 'assets/logos/sport.png'),
+];
 
   @override
   Widget build(BuildContext context) {
