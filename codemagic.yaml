@@ -18,7 +18,7 @@ workflows:
 
       - name: Regenerate Android with latest Kotlin
         script: |
-          flutter create -t app --org com.stvrtv --project-name mobile . --no-offline
+          flutter create -t app --org com.stvrtv --project-name stvrtv . --no-offline
 
       - name: Build APK
         script: |
