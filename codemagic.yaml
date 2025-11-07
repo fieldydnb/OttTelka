@@ -4,17 +4,17 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       flutter: 3.24.0
+      xcode: 15.0
+      java: 11
     scripts:
-      - name: Update Gradle wrapper
+      - name: Update Gradle wrapper to compatible version
         script: |
           cd android
-          ./gradlew wrapper --gradle-version=8.7
+          ./gradlew wrapper --gradle-version=8.3
           cd ..
-      - name: Remove pubspec.lock
+      - name: Remove pubspec.lock and clean caches
         script: |
           rm -f pubspec.lock
-      - name: Clean all caches
-        script: |
           flutter clean
           rm -rf ~/.pub-cache
           rm -rf build
@@ -26,9 +26,8 @@ workflows:
         script: |
           flutter build apk --release --verbose
     artifacts:
-      - build/**/outputs/**/*.apk
+      - build/app/outputs/flutter-apk/app-release.apk
     publishing:
       email:
         recipients:
           - fieldydnb@gmail.com
-
