@@ -4,27 +4,14 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       flutter: 3.24.0
-      xcode: 15.0
-      java: 17
     scripts:
-      - name: Clean everything
+      - name: Build
         script: |
-          rm -rf build .dart_tool pubspec.lock
           flutter clean
-          dart pub cache clean
           flutter pub get
-
-      - name: Regenerate Android
-        script: |
-          flutter create -t app --org com.stvrtv --project-name mobile .
-
-      - name: Build APK
-        script: |
           flutter build apk --release
-
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
-
     publishing:
       email:
         recipients:
