@@ -5,10 +5,15 @@ workflows:
     environment:
       flutter: 3.24.0
     scripts:
-      - name: Clean Flutter cache
+      - name: Remove pubspec.lock
+        script: |
+          rm -f pubspec.lock
+      - name: Clean all caches
         script: |
           flutter clean
-          flutter pub cache repair
+          rm -rf ~/.pub-cache
+          rm -rf build
+          rm -rf .dart_tool
       - name: Get Flutter packages
         script: |
           flutter pub get
@@ -21,4 +26,3 @@ workflows:
       email:
         recipients:
           - fieldydnb@gmail.com
-
