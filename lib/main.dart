@@ -27,10 +27,10 @@ class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
    List<Channel> get channels => [
-        Channel('Jednotka', 'https://5g.towercom.sk/rtvs24-dash-mp4/manifest.mpd', 'assets/logos/jednotka.png'),
-        Channel('Dvojka', 'https://5g.towercom.sk/rtvs24-dash-mp4/manifest.mpd', 'assets/logos/dvojka.png'),
+        Channel('Jednotka', 'https://media.axprod.net/TestVectors/v7-Clear/Manifest_1080p.mpd', 'assets/logos/jednotka.png'),
+        Channel('Dvojka', 'https://livesim2.dashif.org/livesim2/WAVE/av/combined.mpd', 'assets/logos/dvojka.png'),
         Channel(':24', 'https://5g.towercom.sk/rtvs24-dash-mp4/manifest.mpd', 'assets/logos/stvr24.png'),
-        Channel('Šport', 'https://5g.towercom.sk/rtvs24-dash-mp4/manifest.mpd', 'assets/logos/sport.png'),
+        Channel('Šport', 'https://livesim2.dashif.org/livesim2/mpeg-h_one-day-in-berlin/manifest.mpd', 'assets/logos/sport.png'),
       ];
 
   @override
