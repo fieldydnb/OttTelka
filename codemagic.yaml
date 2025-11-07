@@ -1,25 +1,16 @@
-workflows:
-  android-workflow:
-    name: Android Workflow
-    
-    environment:
-      android_signing:
-        - keystore_reference  # Ak máš podpísanie
-      
-    scripts:
-      - name: Pre-clone setup
-        script: |
-          #!/bin/sh
-          mkdir -p "$CM_BUILD_DIR/android"
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
-          echo "flutter.sdk=$HOME/programs/flutter" >> "$CM_BUILD_DIR/android/local.properties"
-      
-      - name: Clean and get dependencies
-        script: |
-          flutter clean
-          rm -f pubspec.lock
-          flutter pub get
-      
-      - name: Build Android
-        script: |
-          flutter build apk --release
+scripts:
+  - name: Generate Android if missing
+    script: |
+      if [ ! -d "android" ]; then
+        flutter create --platforms=android,ios .
+      fi
+  
+  - name: Clean dependencies
+    script: |
+      flutter clean
+      rm -f pubspec.lock
+      flutter pub get
+  
+  - name: Build APK
+    script: |
+      flutter build apk --release
