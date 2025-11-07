@@ -1,26 +1,25 @@
 workflows:
   android-workflow:
-    name: OttTelka Android Build
-    instance_type: mac_mini_m1
+    name: Android Workflow
+    
     environment:
-      flutter: 3.24.0
-
+      android_signing:
+        - keystore_reference  # Ak máš podpísanie
+      
     scripts:
-      - name: Clean and Regenerate Android folder
+      - name: Pre-clone setup
         script: |
-          rm -rf android
-          flutter create --platforms=android .
-
-      - name: Build APK
+          #!/bin/sh
+          mkdir -p "$CM_BUILD_DIR/android"
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
+          echo "flutter.sdk=$HOME/programs/flutter" >> "$CM_BUILD_DIR/android/local.properties"
+      
+      - name: Clean and get dependencies
         script: |
           flutter clean
+          rm -f pubspec.lock
           flutter pub get
+      
+      - name: Build Android
+        script: |
           flutter build apk --release
-
-    artifacts:
-      - build/app/outputs/flutter-apk/app-release.apk
-
-    publishing:
-      email:
-        recipients:
-          - fieldydnb@gmail.com
