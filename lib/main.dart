@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'OttTelka',
+      title: 'STVR LiveTV',
       theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
       home: const HomePage(),
@@ -38,7 +38,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('STVR LiveTelka')),
+      appBar: AppBar(title: const Text('STVR LiveTV')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: GridView.count(

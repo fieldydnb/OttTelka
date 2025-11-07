@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace = "com.otttelka.mobile"
+    namespace = "com.stvrtv.mobile"
     compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
@@ -41,7 +41,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.otttelka.mobile"
+        applicationId "com.stvrtv.mobile"
         minSdkVersion 21
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
