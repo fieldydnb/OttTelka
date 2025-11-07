@@ -1,6 +1,5 @@
-OttTelka_full_flutter_v2
+OttTelka_by_fld
 ------------------------
-Flutter project ready for Codemagic.
 
 How to use:
 1) Upload the entire repository to GitHub (push all files and folders).
