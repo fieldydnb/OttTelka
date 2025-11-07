@@ -1,10 +1,18 @@
 pluginManagement {
-    def flutterSdkPath = getFlutterSdkPath()
-    if (flutterSdkPath == null) {
-        throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+    def flutterSdkPath = {
+        def properties = new Properties()
+        def propertiesFile = new File(rootDir.absolutePath + "/local.properties")
+        if (propertiesFile.exists()) {
+            properties.load(propertiesFile.newInputStream())
+        }
+        def flutterSdkPath = properties.getProperty('flutter.sdk')
+        if (!flutterSdkPath) {
+            throw new GradleException("flutter.sdk not set in local.properties")
+        }
+        return flutterSdkPath
     }
 
-    includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
+    includeBuild("${flutterSdkPath()}/packages/flutter_tools/gradle")
 
     repositories {
         gradlePluginPortal()
@@ -21,15 +29,14 @@ plugins {
 
 include ":app"
 
-def getFlutterSdkPath() {
-    def flutterRoot = File(System.getProperty("user.dir")).parentFile.parentFile
-    def flutterProperties = new File(flutterRoot, ".flutter-properties")
+def localPropertiesFile = new File(rootProject.projectDir, "local.properties")
+def properties = new Properties()
 
-    if (flutterProperties.exists()) {
-        Properties props = new Properties()
-        props.load(flutterProperties.inputStream())
-        return props.getProperty("flutter.sdk")
-    }
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader("UTF-8") { reader -> properties.load(reader) }
+}
 
-    return "$flutterRoot/.fvm/flutter_sdk"
+def flutterSdkPath = properties.getProperty("flutter.sdk")
+if (flutterSdkPath != null) {
+    apply from: "$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle"
 }
