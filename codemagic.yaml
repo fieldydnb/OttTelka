@@ -5,6 +5,11 @@ workflows:
     environment:
       flutter: 3.24.0
     scripts:
+      - name: Update Gradle wrapper
+        script: |
+          cd android
+          ./gradlew wrapper --gradle-version=8.7
+          cd ..
       - name: Remove pubspec.lock
         script: |
           rm -f pubspec.lock
@@ -26,3 +31,4 @@ workflows:
       email:
         recipients:
           - fieldydnb@gmail.com
+
