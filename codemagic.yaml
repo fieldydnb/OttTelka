@@ -14,9 +14,6 @@ workflows:
           rm -rf ~/.pub-cache
           rm -rf build
           rm -rf .dart_tool
-      - name: Create fresh Flutter structure
-        script: |
-          flutter create --force --org com.stvrtv --project-name mobile .
       - name: Get Flutter packages
         script: |
           flutter pub get
@@ -29,5 +26,3 @@ workflows:
       email:
         recipients:
           - fieldydnb@gmail.com
-
-
