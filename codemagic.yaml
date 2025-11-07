@@ -4,20 +4,24 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       flutter: 3.24.0
+
     scripts:
-      - name: Ensure android folder exists
+      - name: Regenerate Android folder
         script: |
           if [ ! -d "android" ]; then
-            echo "Android folder not found. Regenerating..."
-            flutter create .
+            echo "Android folder not found. Regenerating Flutter project..."
+            flutter create --org com.stvrtv --project-name mobile .
           else
-            echo "Android folder already exists. Skipping creation."
+            echo "Android folder exists. Skipping regeneration."
           fi
 
-      - name: Build release APK
+      - name: Fetch dependencies
         script: |
           flutter clean
           flutter pub get
+
+      - name: Build release APK
+        script: |
           flutter build apk --release
 
     artifacts:
