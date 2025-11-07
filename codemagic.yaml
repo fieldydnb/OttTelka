@@ -7,27 +7,26 @@ workflows:
       xcode: 15.0
       java: 17
     scripts:
-      - name: Full clean and regenerate
+      - name: Clean and regenerate
         script: |
-          set -e
           rm -rf android .dart_tool build pubspec.lock
           flutter clean
-          
-      - name: Recreate Android in current directory
-        script: |
-          flutter create -t app --org com.stvrtv --project-name mobile . --no-offline
-      
-      - name: Get packages
+
+      - name: Get Flutter packages (MUSÍ BYŤ PRED BUILD!)
         script: |
           flutter pub get
-      
+
+      - name: Regenerate Android
+        script: |
+          flutter create -t app --org com.stvrtv --project-name mobile . --no-offline
+
       - name: Build APK
         script: |
           flutter build apk --release
-    
+
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
-    
+
     publishing:
       email:
         recipients:
