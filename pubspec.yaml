@@ -1,20 +1,24 @@
-name: otttelka_mobile
-description: OttTelka DASH Player
-publish_to: 'none'
-version: 1.0.0+1
-
-environment:
-  sdk: '>=3.0.0 <4.0.0'
-
-dependencies:
-  flutter:
-    sdk: flutter
-  better_player: ^0.0.83
-  cupertino_icons: ^1.0.2
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
-flutter:
-  uses-material-design: true
+workflows:
+  android-workflow:
+    name: OttTelka Android Build
+    instance_type: mac_mini_m1
+    environment:
+      flutter: 3.24.0
+    scripts:
+      - name: Clean caches
+        script: |
+          flutter clean
+          rm -rf ~/.pub-cache/hosted/pub.dev/package_info_plus*
+          rm -rf build
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+      - name: Build APK
+        script: |
+          flutter build apk --debug
+    artifacts:
+      - build/**/outputs/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - fieldydnb@gmail.com
