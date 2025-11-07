@@ -2,14 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  MediaKit.ensureInitialized();
+  
+  // Inicializuj MediaKit s error handlingom
+  try {
+    MediaKit.ensureInitialized();
+  } catch (e) {
+    print('❌ MediaKit initialization failed: $e');
+  }
+  
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -71,9 +79,31 @@ class HomePage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(ch.logoAsset, width: 100, height: 100, fit: BoxFit.contain),
+                      // Pridaj error handling pre obrázok
+                      Image.asset(
+                        ch.logoAsset,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 100,
+                            height: 100,
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.image_not_supported),
+                          );
+                        },
+                      ),
                       const SizedBox(height: 12),
-                      Text(ch.name, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold)),
+                      Text(
+                        ch.name,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -89,20 +119,41 @@ class PlayerPage extends StatefulWidget {
   final String title;
   final String url;
   final String logo;
-  const PlayerPage({super.key, required this.title, required this.url, required this.logo});
+  
+  const PlayerPage({
+    super.key,
+    required this.title,
+    required this.url,
+    required this.logo,
+  });
 
   @override
   State<PlayerPage> createState() => _PlayerPageState();
 }
 
 class _PlayerPageState extends State<PlayerPage> {
-  late final player = Player();
-  late final controller = VideoController(player);
+  late final Player player = Player();
+  late final VideoController controller = VideoController(player);
+  bool isLoading = true;
+  String? errorMessage;
 
   @override
   void initState() {
     super.initState();
-    player.open(Media(widget.url));
+    _initializePlayer();
+  }
+
+  Future<void> _initializePlayer() async {
+    try {
+      await player.open(Media(widget.url));
+      setState(() => isLoading = false);
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Chyba pri načítavaní: $e';
+        isLoading = false;
+      });
+      print('❌ Player error: $e');
+    }
   }
 
   @override
@@ -115,12 +166,16 @@ class _PlayerPageState extends State<PlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
-      body: Center(
-        child: Video(
-          controller: controller,
-          controls: MaterialVideoControls,
-        ),
-      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : errorMessage != null
+              ? Center(child: Text(errorMessage!))
+              : Center(
+                  child: Video(
+                    controller: controller,
+                    controls: MaterialVideoControls,
+                  ),
+                ),
     );
   }
 }
