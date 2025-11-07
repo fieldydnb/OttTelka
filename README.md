@@ -7,5 +7,5 @@ How to use:
 3) After build finishes, download app-debug.apk from Artifacts.
 
 Notes:
-- Uses better_player for DASH playback.
+- Uses video_player for DASH playback.
 - Player opens inside app and tapping the video switches to fullscreen.
