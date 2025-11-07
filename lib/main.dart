@@ -5,9 +5,9 @@ import 'package:media_kit_video/media_kit_video.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Inicializuj MediaKit s error handlingom
   try {
     MediaKit.ensureInitialized();
+    print('✓ MediaKit initialized successfully');
   } catch (e) {
     print('❌ MediaKit initialization failed: $e');
   }

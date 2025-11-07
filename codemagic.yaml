@@ -10,25 +10,70 @@ workflows:
         script: |
           #!/bin/bash
           set -e
-          
-          # Presunieme sa do build priečinka
           cd $CM_BUILD_DIR
           
           # Vygeneruj Android ak neexistuje
           if [ ! -d "android" ]; then
             echo "Android directory not found, creating..."
             flutter create --platforms=android,ios .
-            echo "Android directory created"
           fi
           
           # Skontroluj či existuje
           if [ -d "android" ]; then
             echo "✓ Android directory exists"
-            ls -la android/ | head -5
           else
             echo "✗ Android directory still missing!"
             exit 1
           fi
+      
+      - name: Configure Android build.gradle
+        script: |
+          #!/bin/bash
+          set -e
+          cd $CM_BUILD_DIR/android/app
+          
+          # Uprav build.gradle
+          cat > build.gradle << 'EOF'
+          plugins {
+              id "com.android.application"
+              id "kotlin-android"
+              id "dev.flutter.flutter-gradle-plugin"
+          }
+          
+          android {
+              compileSdkVersion 35
+              ndkVersion "27.0.12077973"
+          
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_11
+                  targetCompatibility JavaVersion.VERSION_11
+              }
+          
+              kotlinOptions {
+                  jvmTarget = '11'
+              }
+          
+              defaultConfig {
+                  applicationId "com.example.stvr_mobile"
+                  minSdkVersion 21
+                  targetSdkVersion 35
+                  versionCode 1
+                  versionName "1.0.0"
+              }
+          
+              buildTypes {
+                  release {
+                      signingConfig signingConfigs.debug
+                  }
+              }
+          }
+          
+          dependencies {
+              implementation 'androidx.media:media:1.6.0'
+          }
+          EOF
+          
+          echo "✓ build.gradle configured"
       
       - name: Install dependencies
         script: |
