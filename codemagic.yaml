@@ -5,7 +5,7 @@ workflows:
     environment:
       flutter: 3.22.0
       xcode: 15.0
-      java: 11
+      java: 17
     scripts:
       - name: Remove pubspec.lock and clean caches
         script: |
