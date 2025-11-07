@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:video_player/video_player.dart';
+import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  MediaKit.ensureInitialized();
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -92,28 +96,18 @@ class PlayerPage extends StatefulWidget {
 }
 
 class _PlayerPageState extends State<PlayerPage> {
-  late final VideoPlayerController _controller;
-  bool _ready = false;
-  String _errorMessage = '';
+  late final player = Player();
+  late final controller = VideoController(player);
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url))
-      ..initialize().then((_) {
-        setState(() => _ready = true);
-        _controller
-          ..setLooping(true)
-          ..play();
-      }).catchError((e) {
-        setState(() => _errorMessage = 'Chyba: ${e.toString()}');
-        print('❌ Player Error: $e');
-      });
+    player.open(Media(widget.url));
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    player.dispose();
     super.dispose();
   }
 
@@ -122,21 +116,10 @@ class _PlayerPageState extends State<PlayerPage> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: Center(
-        child: _errorMessage.isNotEmpty
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error, color: Colors.red, size: 48),
-                  const SizedBox(height: 16),
-                  Text(_errorMessage, textAlign: TextAlign.center),
-                ],
-              )
-            : _ready
-                ? AspectRatio(
-                    aspectRatio: _controller.value.aspectRatio == 0 ? 16 / 9 : _controller.value.aspectRatio,
-                    child: VideoPlayer(_controller),
-                  )
-                : const CircularProgressIndicator(),
+        child: Video(
+          controller: controller,
+          controls: MaterialVideoControls,
+        ),
       ),
     );
   }
