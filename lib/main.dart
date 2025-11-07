@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'STVR LiveTV',
-      theme: ThemeData.dark(),
+      theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: const Color(0xFF121212),
       debugShowCheckedModeBanner: false,
       home: const HomePage(),
     );
