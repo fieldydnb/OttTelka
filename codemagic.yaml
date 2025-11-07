@@ -1,16 +1,35 @@
-scripts:
-  - name: Generate Android if missing
-    script: |
-      if [ ! -d "android" ]; then
-        flutter create --platforms=android,ios .
-      fi
-  
-  - name: Clean dependencies
-    script: |
-      flutter clean
-      rm -f pubspec.lock
-      flutter pub get
-  
-  - name: Build APK
-    script: |
-      flutter build apk --release
+workflows:
+  android-build:
+    name: Android Build
+    
+    scripts:
+      - name: Setup Flutter environment
+        script: |
+          #!/bin/bash
+          set -e
+          
+          # Vygeneruj Android ak neexistuje
+          if [ ! -d "android" ]; then
+            echo "Android directory not found, creating..."
+            flutter create --platforms=android,ios .
+            echo "Android directory created"
+          fi
+          
+          # Skontroluj či existuje
+          if [ -d "android" ]; then
+            echo "✓ Android directory exists"
+            ls -la android/ | head -5
+          else
+            echo "✗ Android directory still missing!"
+            exit 1
+          fi
+      
+      - name: Install dependencies
+        script: |
+          flutter clean
+          rm -f pubspec.lock
+          flutter pub get
+      
+      - name: Build APK
+        script: |
+          flutter build apk --release
