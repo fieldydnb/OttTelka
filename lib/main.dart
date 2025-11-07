@@ -1,18 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_video/media_kit_video.dart';
+import 'package:video_player/video_player.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  // KRITICKÉ: MediaKit.ensureInitialized() MUSÍ byť PRVÝ!
-  try {
-    MediaKit.ensureInitialized();
-    print('✓ MediaKit initialized');
-  } catch (e) {
-    print('❌ MediaKit error: $e');
-  }
-  
+void main() {
   runApp(const MyApp());
 }
 
@@ -130,28 +119,39 @@ class PlayerPage extends StatefulWidget {
 }
 
 class _PlayerPageState extends State<PlayerPage> {
-  late final player = Player();
-  late final controller = VideoController(player);
+  late VideoPlayerController _controller;
+  bool _isInitialized = false;
+  bool _isPlaying = false;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _play();
+    _initializePlayer();
   }
 
-  Future<void> _play() async {
+  Future<void> _initializePlayer() async {
     try {
-      print('🎬 Opening stream: ${widget.url}');
-      await player.open(Media(widget.url));
-      print('✓ Stream opened successfully');
+      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url));
+      await _controller.initialize();
+      
+      _controller.addListener(() {
+        setState(() {
+          _isPlaying = _controller.value.isPlaying;
+        });
+      });
+      
+      setState(() => _isInitialized = true);
+      _controller.play();
     } catch (e) {
-      print('❌ Error opening stream: $e');
+      setState(() => _errorMessage = 'Chyba: $e');
+      print('❌ Error: $e');
     }
   }
 
   @override
   void dispose() {
-    player.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -159,12 +159,43 @@ class _PlayerPageState extends State<PlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
-      body: Center(
-        child: Video(
-          controller: controller,
-          controls: MaterialVideoControls,
-        ),
-      ),
+      body: _isInitialized
+          ? GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isPlaying ? _controller.pause() : _controller.play();
+                });
+              },
+              child: Center(
+                child: AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      VideoPlayer(_controller),
+                      if (!_isPlaying)
+                        Container(
+                          color: Colors.black54,
+                          child: const Icon(
+                            Icons.play_arrow,
+                            color: Colors.white,
+                            size: 64,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          : Center(
+              child: _errorMessage != null
+                  ? Text(
+                      _errorMessage!,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white),
+                    )
+                  : const CircularProgressIndicator(),
+            ),
     );
   }
 }
