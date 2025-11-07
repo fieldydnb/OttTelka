@@ -17,7 +17,7 @@ workflows:
         script: |
           cd ..
           rm -rf otttelka_clean
-          flutter create -t app otttelka_clean
+          flutter create -t app --org com.stvrtv --project-name mobile otttelka_clean
           cd otttelka_clean
       
       - name: Restore backed up code
