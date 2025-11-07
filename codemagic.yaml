@@ -5,11 +5,16 @@ workflows:
     environment:
       flutter: 3.24.0
     scripts:
-      - name: Regenerate Android
+      - name: Ensure android folder exists
         script: |
-          flutter create -t app --org com.stvrtv --project-name mobile .
+          if [ ! -d "android" ]; then
+            echo "Android folder not found. Regenerating..."
+            flutter create .
+          else
+            echo "Android folder already exists. Skipping creation."
+          fi
 
-      - name: Build
+      - name: Build release APK
         script: |
           flutter clean
           flutter pub get
