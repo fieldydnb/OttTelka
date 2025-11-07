@@ -19,7 +19,7 @@ workflows:
           flutter pub get
       - name: Build APK
         script: |
-          flutter build apk --debug --verbose
+          flutter build apk --release --verbose
     artifacts:
       - build/**/outputs/**/*.apk
     publishing:
