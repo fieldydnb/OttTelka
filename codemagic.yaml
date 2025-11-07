@@ -2,11 +2,17 @@ workflows:
   android-build:
     name: Android Build
     
+    environment:
+      flutter: stable
+    
     scripts:
       - name: Setup Flutter environment
         script: |
           #!/bin/bash
           set -e
+          
+          # Presunieme sa do build priečinka
+          cd $CM_BUILD_DIR
           
           # Vygeneruj Android ak neexistuje
           if [ ! -d "android" ]; then
@@ -26,10 +32,19 @@ workflows:
       
       - name: Install dependencies
         script: |
+          #!/bin/bash
+          set -e
+          cd $CM_BUILD_DIR
           flutter clean
           rm -f pubspec.lock
           flutter pub get
       
       - name: Build APK
         script: |
+          #!/bin/bash
+          set -e
+          cd $CM_BUILD_DIR
           flutter build apk --release
+    
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
