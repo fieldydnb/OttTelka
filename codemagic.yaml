@@ -1,14 +1,19 @@
 workflows:
   android-workflow:
-    name: Android Workflow
+    name: OttTelka Android Build
+    instance_type: mac_mini_m1
     environment:
       flutter: 3.24.0
-      android_signing:
-        - keystore_reference
     scripts:
       - name: Get Flutter packages
-        script: flutter pub get
+        script: |
+          flutter pub get
       - name: Build APK
-        script: flutter build apk --release
+        script: |
+          flutter build apk --debug
     artifacts:
       - build/**/outputs/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - fieldydnb@gmail.com
