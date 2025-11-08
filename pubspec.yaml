@@ -28,4 +28,3 @@ flutter:
 flutter_native_splash:
   color: "#1e3a8a"
   image: assets/splash/splash.png
-  android_branding: assets/icons/ic_launcher_192.png
