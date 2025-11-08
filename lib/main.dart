@@ -14,7 +14,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'STVR LiveTV',
-      theme: ThemeData.dark().copyWith(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF1e3a8a),
+          brightness: Brightness.dark,
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF1e3a8a),
+          foregroundColor: Colors.white,
+          elevation: 8,
+        ),
         scaffoldBackgroundColor: const Color(0xFF121212),
       ),
       debugShowCheckedModeBanner: false,
@@ -43,7 +53,15 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('STVR LiveTV')),
+      appBar: AppBar(
+        title: const Text(
+          'STVR LiveTV',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: GridView.count(

@@ -1,5 +1,5 @@
 name: stvr_mobile
-description: OttTelka DASH Player
+description: STVR LiveTV - Streaming aplikácia
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -16,8 +16,15 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_native_splash: ^2.3.0
 
 flutter:
   uses-material-design: true
   assets:
     - assets/logos/
+    - assets/icons/
+
+flutter_native_splash:
+  color: "#1e3a8a"
+  image: assets/splash/splash.png
+  android_branding: assets/icons/ic_launcher_192.png

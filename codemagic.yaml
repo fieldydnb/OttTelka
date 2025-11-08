@@ -24,14 +24,29 @@ workflows:
           mkdir -p "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xxhdpi"
           mkdir -p "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xxxhdpi"
           
-          # Kopíruj ikony s presným mapovaním
           cp "$CM_BUILD_DIR/assets/icons/ic_launcher_48.png" "$CM_BUILD_DIR/android/app/src/main/res/mipmap-mdpi/ic_launcher.png"
           cp "$CM_BUILD_DIR/assets/icons/ic_launcher_72.png" "$CM_BUILD_DIR/android/app/src/main/res/mipmap-hdpi/ic_launcher.png"
           cp "$CM_BUILD_DIR/assets/icons/ic_launcher_96.png" "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png"
           cp "$CM_BUILD_DIR/assets/icons/ic_launcher_144.png" "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
           cp "$CM_BUILD_DIR/assets/icons/ic_launcher_192.png" "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
           
-          echo "✓ Icons copied successfully"
+          echo "✓ Icons copied"
+      
+      - name: Create Strings Resources
+        script: |
+          #!/bin/bash
+          set -e
+          
+          mkdir -p "$CM_BUILD_DIR/android/app/src/main/res/values"
+          
+          cat > "$CM_BUILD_DIR/android/app/src/main/res/values/strings.xml" << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <string name="app_name">STVR LiveTV</string>
+          </resources>
+          EOF
+          
+          echo "✓ Strings configured"
       
       - name: Configure AndroidManifest
         script: |
@@ -43,13 +58,13 @@ workflows:
           cat > "$MANIFEST" << 'EOF'
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-              package="com.example.stvr_mobile">
+              package="com.stvr.livetv">
           
               <uses-permission android:name="android.permission.INTERNET"/>
               <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
           
               <application
-                  android:label="STVR LiveTV"
+                  android:label="@string/app_name"
                   android:icon="@mipmap/ic_launcher"
                   android:roundIcon="@mipmap/ic_launcher"
                   android:usesCleartextTraffic="true">
