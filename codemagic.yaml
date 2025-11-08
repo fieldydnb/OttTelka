@@ -13,6 +13,13 @@ workflows:
             flutter create --platforms=android,ios .
           fi
       
+      - name: Generate Splash Screen
+        script: |
+          #!/bin/bash
+          set -e
+          cd $CM_BUILD_DIR
+          flutter pub run flutter_native_splash:create
+      
       - name: Copy App Icons
         script: |
           #!/bin/bash
