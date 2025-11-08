@@ -116,6 +116,21 @@ workflows:
           set -e
           cd $CM_BUILD_DIR
           flutter build apk --release
+      
+      - name: Rename APK
+        script: |
+          #!/bin/bash
+          set -e
+          
+          VERSION=$(grep "version:" $CM_BUILD_DIR/pubspec.yaml | head -1 | awk '{print $2}' | cut -d+ -f1)
+          
+          RELEASE_APK="$CM_BUILD_DIR/build/app/outputs/flutter-apk/app-release.apk"
+          RENAMED_APK="$CM_BUILD_DIR/build/app/outputs/flutter-apk/STVR-LiveTV-v$VERSION.apk"
+          
+          if [ -f "$RELEASE_APK" ]; then
+            mv "$RELEASE_APK" "$RENAMED_APK"
+            echo "✓ APK renamed to: STVR-LiveTV-v$VERSION.apk"
+          fi
     
     artifacts:
-      - build/app/outputs/flutter-apk/app-release.apk
+      - build/app/outputs/flutter-apk/STVR-LiveTV-*.apk
