@@ -13,6 +13,26 @@ workflows:
             flutter create --platforms=android,ios .
           fi
       
+      - name: Copy App Icons
+        script: |
+          #!/bin/bash
+          set -e
+          
+          mkdir -p "$CM_BUILD_DIR/android/app/src/main/res/mipmap-mdpi"
+          mkdir -p "$CM_BUILD_DIR/android/app/src/main/res/mipmap-hdpi"
+          mkdir -p "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xhdpi"
+          mkdir -p "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xxhdpi"
+          mkdir -p "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xxxhdpi"
+          
+          # Kopíruj ikony s presným mapovaním
+          cp "$CM_BUILD_DIR/assets/icons/ic_launcher_48.png" "$CM_BUILD_DIR/android/app/src/main/res/mipmap-mdpi/ic_launcher.png"
+          cp "$CM_BUILD_DIR/assets/icons/ic_launcher_72.png" "$CM_BUILD_DIR/android/app/src/main/res/mipmap-hdpi/ic_launcher.png"
+          cp "$CM_BUILD_DIR/assets/icons/ic_launcher_96.png" "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png"
+          cp "$CM_BUILD_DIR/assets/icons/ic_launcher_144.png" "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
+          cp "$CM_BUILD_DIR/assets/icons/ic_launcher_192.png" "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+          
+          echo "✓ Icons copied successfully"
+      
       - name: Configure AndroidManifest
         script: |
           #!/bin/bash
@@ -31,6 +51,7 @@ workflows:
               <application
                   android:label="STVR LiveTV"
                   android:icon="@mipmap/ic_launcher"
+                  android:roundIcon="@mipmap/ic_launcher"
                   android:usesCleartextTraffic="true">
           
                   <activity
