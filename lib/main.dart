@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
           foregroundColor: Colors.white,
           elevation: 8,
         ),
-        scaffoldBackgroundColor: const Color(0xFF121212),
+        scaffoldBackgroundColor: const Color(0xFF1e3a8a),
       ),
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),
