@@ -25,19 +25,21 @@ workflows:
           #!/bin/bash
           set -e
           
+          SOURCE_ICON="$CM_BUILD_DIR/assets/icons/ic_launcher_192.png"
+          
           mkdir -p "$CM_BUILD_DIR/android/app/src/main/res/mipmap-mdpi"
           mkdir -p "$CM_BUILD_DIR/android/app/src/main/res/mipmap-hdpi"
           mkdir -p "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xhdpi"
           mkdir -p "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xxhdpi"
           mkdir -p "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xxxhdpi"
           
-          cp "$CM_BUILD_DIR/assets/icons/ic_launcher_48.png" "$CM_BUILD_DIR/android/app/src/main/res/mipmap-mdpi/ic_launcher.png"
-          cp "$CM_BUILD_DIR/assets/icons/ic_launcher_72.png" "$CM_BUILD_DIR/android/app/src/main/res/mipmap-hdpi/ic_launcher.png"
-          cp "$CM_BUILD_DIR/assets/icons/ic_launcher_96.png" "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png"
-          cp "$CM_BUILD_DIR/assets/icons/ic_launcher_144.png" "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
-          cp "$CM_BUILD_DIR/assets/icons/ic_launcher_192.png" "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+          convert "$SOURCE_ICON" -resize 48x48 "$CM_BUILD_DIR/android/app/src/main/res/mipmap-mdpi/ic_launcher.png"
+          convert "$SOURCE_ICON" -resize 72x72 "$CM_BUILD_DIR/android/app/src/main/res/mipmap-hdpi/ic_launcher.png"
+          convert "$SOURCE_ICON" -resize 96x96 "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png"
+          convert "$SOURCE_ICON" -resize 144x144 "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
+          cp "$SOURCE_ICON" "$CM_BUILD_DIR/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
           
-          echo "✓ Icons copied"
+          echo "✓ Icons scaled and copied"
       
       - name: Create Strings Resources
         script: |
